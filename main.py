@@ -5,8 +5,7 @@ import time
 import logging
 
 # ================= CONFIG =================
-SCRATCH_USER = os.getenv("SCRATCH_USER")
-SCRATCH_SESSION = os.getenv("SCRATCH_SESSION")  # Add this in Render
+SCRATCH_SESSION = os.getenv("SCRATCH_SESSION")
 PROJECT_ID = os.getenv("PROJECT_ID")
 
 SUPABASE_URL = "https://ymoxugsclllkjjtdiicg.supabase.co"
@@ -61,10 +60,10 @@ def decode(encoded):
     return decoded
 
 # ================= SERVER =================
-session = sa.Session(SCRATCH_SESSION, username=SCRATCH_USER)
+session = sa.Session(SCRATCH_SESSION)
 cloud = session.connect_cloud(PROJECT_ID)
 
-logger.info("Server started successfully")
+logger.info("Server started successfully with session ID")
 
 @cloud.event
 def on_set(activity):
@@ -79,8 +78,7 @@ def on_set(activity):
                 game_key = f"{username}:{project_id}"
 
                 if action == "write":
-                    # You will send data in another variable or extend this
-                    data = "temp"  # Replace with actual data
+                    data = "temp_data"  # Replace with actual data from cloud var
                     encoded = encode(data)
                     supabase.table("player_rewards").upsert({
                         "username": game_key,
