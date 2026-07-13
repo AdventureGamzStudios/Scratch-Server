@@ -6,7 +6,7 @@ import logging
 
 # ================= CONFIG =================
 SCRATCH_USER = os.getenv("SCRATCH_USER")
-SCRATCH_PASS = os.getenv("SCRATCH_PASS")
+SCRATCH_SESSION = os.getenv("SCRATCH_SESSION")  # Add this in Render
 PROJECT_ID = os.getenv("PROJECT_ID")
 
 SUPABASE_URL = "https://ymoxugsclllkjjtdiicg.supabase.co"
@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Encoder / Decoder
-KEY = r"abcdefghijklmnopqrstuvwxyz1234567890 @-_.,:'`\"~+=*&#$%?!/\\(){}[]<>©®℗™×÷"
+KEY = r"abcdefghijklmnopqrstuvwxyz1234567890 @-_.,:'`~+=*&#$%?!/\\(){}[]<>©®℗™×÷"
 
 def encode(string):
     if not string:
@@ -61,10 +61,10 @@ def decode(encoded):
     return decoded
 
 # ================= SERVER =================
-session = sa.login(SCRATCH_USER, SCRATCH_PASS)
+session = sa.Session(SCRATCH_SESSION, username=SCRATCH_USER)
 cloud = session.connect_cloud(PROJECT_ID)
 
-logger.info("Server started - Simple mode")
+logger.info("Server started successfully")
 
 @cloud.event
 def on_set(activity):
@@ -73,24 +73,20 @@ def on_set(activity):
 
     try:
         if var == "request":
-            # Format: username:project_id:action
             parts = value.split(":", 2)
             if len(parts) == 3:
                 username, project_id, action = parts
                 game_key = f"{username}:{project_id}"
 
                 if action == "write":
-                    # The project will send the data in another variable or same request
-                    # For simplicity, assume data is in another cloud var or combined
-                    # You can adjust this
-                    data = "temp_data"  # Replace with actual data from cloud var
+                    # You will send data in another variable or extend this
+                    data = "temp"  # Replace with actual data
                     encoded = encode(data)
                     supabase.table("player_rewards").upsert({
                         "username": game_key,
                         "data": encoded
                     }).execute()
                     cloud.set_var("status", "saved")
-                    logger.info(f"Saved for {username} in project {project_id}")
 
                 elif action == "read":
                     response = supabase.table("player_rewards").select("data").eq("username", game_key).execute()
