@@ -3,25 +3,26 @@ import os
 import time
 import logging
 
-SCRATCH_USER = os.getenv("SCRATCH_USER")
-SCRATCH_PASS = os.getenv("SCRATCH_PASS")
+# Environment Variables (add these in Replit Secrets)
+# SCRATCH_USER
+# SCRATCH_PASS
+# PROJECT_ID
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-logger.info("Attempting login...")
+logger.info("Starting server...")
 
-session = sa.login(SCRATCH_USER, SCRATCH_PASS)
-logger.info("Logged in successfully!")
+session = sa.login(os.getenv("SCRATCH_USER"), os.getenv("SCRATCH_PASS"))
+cloud = session.connect_cloud(os.getenv("PROJECT_ID"))
 
-# Test comment
-try:
-    project = session.connect_project(930523177)  # Change to your project ID
-    project.post_comment("Cool" + time.strftime("%Y-%m-%d %H:%M:%S"))
-    logger.info("Comment posted!")
-except Exception as e:
-    logger.error(f"Error: {e}")
+logger.info("Logged in and connected to cloud!")
+
+@cloud.event
+def on_set(activity):
+    logger.info(f"Received: {activity.var} = {activity.value}")
+    # Add your logic here later
 
 while True:
     time.sleep(30)
-    logger.info("Server is running...")
+    logger.info("Server is alive")
