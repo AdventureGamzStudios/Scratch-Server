@@ -16,8 +16,8 @@ logger.info("Logged in successfully!")
 
 # Test comment
 try:
-    project = session.connect_project(123456789)  # Change to your project ID
-    project.post_comment("Test from server - " + time.strftime("%Y-%m-%d %H:%M:%S"))
+    project = session.connect_project(930523177)  # Change to your project ID
+    project.post_comment("Cool" + time.strftime("%Y-%m-%d %H:%M:%S"))
     logger.info("Comment posted!")
 except Exception as e:
     logger.error(f"Error: {e}")
