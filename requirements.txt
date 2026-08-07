@@ -1,3 +1,4 @@
 scratchattach
 supabase
 flask
+python-dotenv
