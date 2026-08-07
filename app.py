@@ -47,7 +47,7 @@ except Exception as e:
     logger.error(f"Login failed: {e}")
     raise
 
-@cloud.event
+@cloud.events
 def on_set(activity):
     var = activity.var
     value = str(activity.value).strip()
