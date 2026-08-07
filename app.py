@@ -47,10 +47,13 @@ except Exception as e:
     logger.error(f"Login failed: {e}")
     raise
 
-@cloud.events
-def on_set(activity):
-    var = activity.var
-    value = str(activity.value).strip()
+# 1. Define the event handler object (put this ABOVE your function)
+events = cloud.events() 
+
+# 2. Use the new object as your decorator (this replaces line 50)
+@events.event
+def on_set(activity): # Or whatever your function name/argument is
+    print(f"Variable changed: {activity.var} to {activity.value}")
 
     try:
         if var == "request":
